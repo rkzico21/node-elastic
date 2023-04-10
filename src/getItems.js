@@ -1,4 +1,4 @@
-const { uuid } = require("uuidv4");
+const { v4: uuidv4 } = require("uuid");
 
 const categories = [
   {
@@ -27,11 +27,11 @@ const getItemsToIndex = () => {
   const items = [];
   for (let i = 0; i < categories.length * 2; i++) {
     const item = {
-      id: `${uuid()}-${i}`,
+      id: `${uuidv4()}-${i}`,
       title: `item${i}`,
     };
 
-    const category = i % categories.length;
+    const category = categories[i % categories.length];
     item.categoryName = category.name;
     if (category.subType) item.categorySubtype = category.subType;
 
