@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const elasticClient = require("./elastic/elastic-client");
 const client = elasticClient;
 const getItemsToIndex = require("./getItems");
+const getQueryPayload = require("./getQueryPayload");
 require("express-async-errors");
 
 const app = express();
@@ -10,43 +11,52 @@ const app = express();
 app.use(bodyParser.json());
 
 // Express routes
-
-app.post("/create-index", async (req, res) => {
+const indexName = "items";
+app.post("/index-items", async (req, res) => {
   // here we are forcing an index refresh, otherwise we will not
   // get any result in the consequent search
   const items = getItemsToIndex();
-  /*for (let i = 0; i < items.length; i++) {
+  for (let i = 0; i < items.length; i++) {
     await client.index({
-      index: "test-index",
-      id: items.id,
+      index: indexName,
+      _id: items.id,
       document: {
         ...items[i],
       },
     });
-  }*/
+  }
 
-  await client.indices.refresh({ index: "test-index" });
+  await client.indices.refresh({ index: indexName });
 
   res.send(items);
 });
 app.delete("/remove-post", async (req, res) => {
-  const result = await elasticClient.delete({
-    index: "posts",
+  const result = await elasticClient.deleteI({
+    index: indexName,
     id: req.query.id,
   });
 
   res.json(result);
 });
+
 app.get("/search", async (req, res) => {
+  const payload = getQueryPayload({
+    categories: [
+      { name: "category1", subCategories: ["default", "subcategory1"] },
+      { name: "category2" },
+      { name: "category4", subCategories: ["default"] },
+    ],
+  });
+
   const result = await elasticClient.search({
-    index: "test-index",
-    query: { fuzzy: { title: req.query.query } },
+    index: indexName,
+    body: payload,
   });
   res.json(result);
 });
 app.get("/posts", async (req, res) => {
   const result = await elasticClient.search({
-    index: "test-index",
+    index: indexName,
     query: {
       match_all: {},
     },

@@ -5,6 +5,14 @@ const categories = [
     name: "category1",
   },
   {
+    name: "category1",
+    subType: "subcategory1",
+  },
+  {
+    name: "category1",
+    subType: "subcategory2",
+  },
+  {
     name: "category2",
   },
   {
