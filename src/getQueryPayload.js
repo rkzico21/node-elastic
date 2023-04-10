@@ -57,7 +57,7 @@ const getQueryPayload = (filter) => {
   const or_must_not = [];
   const sort = [];
 
-  const { mTypes, searchString, categories } = filter;
+  const { mTypes, searchString, categories, title } = filter;
 
   let query = {
     simple_query_string: {
@@ -71,6 +71,12 @@ const getQueryPayload = (filter) => {
 
   const mTypesTerms = { terms: { mType: [] } };
   const mTypesTerms_1 = { terms: { mType: [] } };
+
+  if (title) {
+    const titleTerms = { terms: { title } };
+    must.push(titleTerms);
+    or_must.push(titleTerms);
+  }
 
   // must.push(mTypesTerms);
   // or_must.push(mTypesTerms_1);

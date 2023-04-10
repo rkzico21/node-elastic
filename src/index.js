@@ -46,6 +46,7 @@ app.get("/search", async (req, res) => {
       { name: "category2" },
       { name: "category4", subCategories: ["default"] },
     ],
+    title: ["item0", "item9", "item8", "item7", "item6", "item5"],
   });
 
   const result = await elasticClient.search({
