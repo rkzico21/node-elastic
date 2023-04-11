@@ -1,9 +1,7 @@
 const getCategoriesFilter = (categories) => {
   const categoriesShould = [];
   const defaultCategories = categories
-    .filter(
-      (c) => !c.subCategories?.length || c.subCategories.includes("default")
-    )
+    .filter((c) => !c.subCategories?.length)
     .map((c) => c.name);
 
   if (defaultCategories.length) {
@@ -19,21 +17,23 @@ const getCategoriesFilter = (categories) => {
     });
   }
 
-  categories.forEach((c) => {
-    const { name, subCategories } = c;
-    const subCategoriesWithoutDefault = (subCategories || []).filter(
-      (s) => !s.includes("default")
-    );
+  const categoriesMap = categories.reduce((acc, current) => {
+    if (!current.subCategory) return acc;
+    const val = acc.get(current.name) || [];
+    if (!val.includes(current.subCategory))
+      acc.set(current.name, [...val, current.subCategory]);
+    return acc;
+  }, new Map());
 
-    console.log(subCategoriesWithoutDefault);
-    if (!subCategoriesWithoutDefault.length) return;
+  categoriesMap.forEach((subCategories, key) => {
+    if (!subCategories.length) return;
     const subcategory_must = [];
 
     const categoryTerm = {
-      terms: { categoryName: [name] },
+      terms: { categoryName: [key] },
     };
     const subCategoryTerm = {
-      terms: { categorySubtype: subCategoriesWithoutDefault },
+      terms: { categorySubtype: subCategories },
     };
 
     subcategory_must.push(categoryTerm);

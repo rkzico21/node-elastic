@@ -42,9 +42,10 @@ app.delete("/remove-post", async (req, res) => {
 app.get("/search", async (req, res) => {
   const payload = getQueryPayload({
     categories: [
-      { name: "category1", subCategories: ["default", "subcategory1"] },
+      { name: "category1" },
+      { name: "category1", subCategory: "subcategory1" },
       { name: "category2" },
-      { name: "category4", subCategories: ["default"] },
+      { name: "category4" },
     ],
     title: ["item0", "item9", "item8", "item7", "item6", "item5"],
   });
